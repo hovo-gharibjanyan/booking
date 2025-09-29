@@ -39,17 +39,6 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('home')" :active="route().current('home')">
-                                    Каталог Туров
-                                </NavLink>
-                                <template v-if="$page.props.auth.user.role === 'admin'">
-                                    <NavLink :href="route('admin.bookings.index')" :active="route().current('admin.bookings.index')">
-                                        Админ: Брони
-                                    </NavLink>
-                                    <NavLink :href="route('admin.tours.index')" :active="route().current('admin.tours.index')">
-                                        Админ: Туры
-                                    </NavLink>
-                                </template>
                             </div>
                         </div>
 
