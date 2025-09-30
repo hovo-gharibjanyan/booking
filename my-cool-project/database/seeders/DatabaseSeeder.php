@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin', 
         ]);
         
-
-        $this->call([
-            TourSeeder::class,
-        ]);
+        \App\Models\Host::factory(5)->create();
+        // $this->call([
+        //     TourSeeder::class,
+        // ]);
     }
 }

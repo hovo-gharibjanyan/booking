@@ -202,6 +202,12 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
+                <div v-if="$page.props.flash && $page.props.flash.success" class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-4">
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert">
+                        <strong class="font-bold">Успех!</strong>
+                        <span class="block sm:inline">{{ $page.props.flash.success }}</span>
+                    </div>
+                </div>
                 <slot />
             </main>
         </div>

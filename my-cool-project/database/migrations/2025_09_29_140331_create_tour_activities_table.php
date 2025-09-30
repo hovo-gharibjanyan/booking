@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tours', function (Blueprint $table) {
+        Schema::create('tour_activities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tour_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->text('description')->nullable();
-            $table->unsignedInteger('price_minor');
-            $table->unsignedInteger('max_seats');
-            $table->foreignId('host_id')->nullable()->constrained()->onDelete('set null');
+            $table->text('description');
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tours');
+        Schema::dropIfExists('tour_activities');
     }
 };

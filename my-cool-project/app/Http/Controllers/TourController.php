@@ -16,8 +16,10 @@ class TourController extends Controller
         ]);
     }
 
-    public function show(Tour $tour)
+    public function show(string $id)
     {
+        $tour = Tour::with(['host', 'images', 'activities', 'dates'])->findOrFail($id);
+    
         return Inertia::render('Tours/Show', [
             'tour' => $tour,
         ]);

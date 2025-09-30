@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tours', function (Blueprint $table) {
+        Schema::create('tour_dates', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->unsignedInteger('price_minor');
-            $table->unsignedInteger('max_seats');
-            $table->foreignId('host_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('tour_id')->constrained()->onDelete('cascade');
+            $table->date('date');
+            $table->unique(['tour_id', 'date']);
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tours');
+        Schema::dropIfExists('tour_dates');
     }
 };
