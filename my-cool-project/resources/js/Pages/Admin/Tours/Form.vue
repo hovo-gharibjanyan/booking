@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -7,16 +7,38 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 
 
+
+const props = defineProps({
+    hosts: Array,
+    tour: {
+        type: Object,
+        default: null,
+    }
+    
+});
+
+const isEditing = !!props.tour;
+
 const form = useForm({
-    title: '',
-    description: '',
-    price_minor: 0,
-    max_seats: 10,
-    host_id: null,
+    title: props.tour?.title ?? '',
+    description: props.tour?.description ?? '',
+    price_minor: props.tour?.price_minor ?? 0,
+    max_seats: props.tour?.max_seats ?? 10,
+    host_id: props.tour?.host_id ?? null,
     images: [],
     activities: [],
     dates: [],
 });
+
+const submit = () => {
+    if (isEditing) {
+        form.put(route('admin.tours.update', props.tour.id), {
+            _method: 'put',
+        });
+    } else {
+        form.post(route('admin.tours.store'));
+    }
+};
 
 const addActivity = () => {
     form.activities.push({ title: '', description: '', image: null });
@@ -40,18 +62,16 @@ const handleActivityImageUpload = (event, index) => {
     form.activities[index].image = event.target.files[0];
 };
 
-const submit = () => {
-    form.post(route('admin.tours.store'));
-};
 
 </script>
 
 <template>
     <Head title="Создание тура" />
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Создание нового тура</h2>
+            <!-- <h2 class="font-semibold text-xl text-gray-800 leading-tight">Создание нового тура</h2> -->
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ isEditing ? 'Редактирование тура' : 'Создание нового тура' }}</h2>
         </template>
 
         <div class="py-12">
@@ -131,5 +151,5 @@ const submit = () => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>

@@ -12,7 +12,7 @@ class TourController extends Controller
     public function index()
     {
         return Inertia::render('Tours/Index', [
-            'tours' => Tour::all(),
+            'tours' => Tour::with('images')->latest()->paginate(10),
         ]);
     }
 

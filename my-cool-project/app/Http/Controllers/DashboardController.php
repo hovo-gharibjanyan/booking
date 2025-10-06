@@ -11,7 +11,7 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        $bookings = $user->bookings()->with('tour')->latest()->get();
+        $bookings = $user->bookings()->with('tour.images')->latest()->get();
 
         return Inertia::render('Dashboard', [
             'bookings' => $bookings

@@ -6,6 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Chatbot from '@/Components/Chatbot.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -33,23 +34,23 @@ const showingNavigationDropdown = ref(false);
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
-                                >
-                                    Dashboard
+                            <NavLink :href="route('home')" :active="route().current('home')">
+                                Каталог
+                            </NavLink>
+
+                            <NavLink v-if="$page.props.auth.user" :href="route('dashboard')" :active="route().current('dashboard')">
+                                Мои Брони
+                            </NavLink>
+
+                            <!-- Блок для админа -->
+                            <template v-if="$page.props.auth.user.role === 'admin'">
+                                <NavLink :href="route('admin.bookings.index')" :active="route().current('admin.bookings.index')">
+                                    Админ: Брони
                                 </NavLink>
-                                <NavLink :href="route('home')" :active="route().current('home')">
-                                    Каталог Туров
+                                <NavLink :href="route('admin.tours.index')" :active="route().current('admin.tours.index')">
+                                    Админ: Туры
                                 </NavLink>
-                                <template v-if="$page.props.auth.user.role === 'admin'">
-                                    <NavLink :href="route('admin.bookings.index')" :active="route().current('admin.bookings.index')">
-                                        Админ: Брони
-                                    </NavLink>
-                                    <NavLink :href="route('admin.tours.index')" :active="route().current('admin.tours.index')">
-                                        Админ: Туры
-                                    </NavLink>
-                                </template>
+                            </template>
                             </div>
                         </div>
 
@@ -208,8 +209,15 @@ const showingNavigationDropdown = ref(false);
                         <span class="block sm:inline">{{ $page.props.flash.success }}</span>
                     </div>
                 </div>
+                <div v-if="$page.props.flash && $page.props.flash.error" class="max-w-7xl mx-auto ...">
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+                        <strong class="font-bold">Ошибка!</strong>
+                        <span class="block sm:inline">{{ $page.props.flash.error }}</span>
+                    </div>
+                </div>
                 <slot />
             </main>
         </div>
+        <Chatbot />
     </div>
 </template>

@@ -36,6 +36,27 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/bookings/{booking}/payment', [\App\Http\Controllers\BookingController::class, 'showPaymentForm'])->name('bookings.payment.create');
+    Route::post('/bookings/{booking}/payment', [\App\Http\Controllers\BookingController::class, 'processPayment'])->name('bookings.payment.store');
+    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancelBooking'])->name('bookings.cancelBooking');
+});
+
+Route::get('/test-gemini', function () {
+    try {
+        $apiKey = env('GEMINI_API_KEY');
+        if (!$apiKey) { return "Ошибка: Ключ GEMINI_API_KEY не найден в .env файле."; }
+
+        $client = \Gemini::client($apiKey);
+        
+        // Используем общий метод generativeModel и передаем ему ПОЛНОЕ имя
+        $result = $client->generativeModel('gemini-pro-latest') // Можно и 'gemini-2.5-pro'
+            ->generateContent('Напиши "Привет, Мир!" на русском');
+
+        return $result->text();
+
+    } catch (\Exception $e) {
+        return "Критическая ошибка: " . $e->getMessage();
+    }
 });
 
 Route::middleware(['auth', 'verified', 'admin'])
@@ -47,7 +68,8 @@ Route::middleware(['auth', 'verified', 'admin'])
             ->name('bookings.index');
 
         Route::resource('tours', \App\Http\Controllers\Admin\TourController::class);
-        
+        Route::post('/bookings/{booking}/confirm-payment', [\App\Http\Controllers\Admin\BookingController::class, 'confirmPayment'])->name('bookings.confirm-payment');
+
     });
 
 require __DIR__.'/auth.php';

@@ -1,16 +1,21 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
     tours: Object, // Laravel Paginator приходит как объект
 });
+
+const handleDelete = () => {
+    return confirm('Вы уверены? Это действие необратимо!');
+};
+
 </script>
 
 <template>
     <Head title="Управление турами" />
 
-    <AuthenticatedLayout>
+    <AppLayout>
         <template #header>
             <div class="flex justify-between items-center">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -47,6 +52,16 @@ defineProps({
                                         <Link :href="route('admin.tours.edit', tour.id)" class="text-indigo-600 hover:text-indigo-900">
                                             Edit
                                         </Link>
+
+                                        <Link 
+                                        :href="route('admin.tours.destroy', tour.id)"
+                                        method="delete"
+                                        as="button"
+                                        class="text-red-600 hover:text-red-900"
+                                        :onBefore="handleDelete"
+                                        >
+                                            Delete
+                                        </Link>
                                     </td>
                                 </tr>
                             </tbody>
@@ -56,5 +71,5 @@ defineProps({
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>
