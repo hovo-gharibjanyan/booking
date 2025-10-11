@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\TourController; 
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\FirebaseGoogleController; 
+use App\Http\Controllers\FavoriteTourController;
 
 // Route::get('/', function () {
 //     return Inertia::render('Welcome', [
@@ -19,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 
 Route::get('/', [TourController::class, 'index']);
 Route::get('/tours/{tour}', [TourController::class, 'show'])->name('tours.show');
+Route::post('/auth/google/login', [FirebaseGoogleController::class, 'login'])->name('google.login');
 Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store')->middleware('auth');
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])->name('dashboard');
@@ -30,6 +33,11 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])
         ->name('bookings.cancel');
+
+    Route::get('/favorites', [FavoriteTourController::class, 'index'])->name('favorites.index');
+    Route::post('/tours/{tour}/favorite', [FavoriteTourController::class, 'store'])->name('tours.favorite');
+    Route::delete('/tours/{tour}/favorite', [FavoriteTourController::class, 'destroy'])->name('tours.unfavorite');
+    Route::post('/tours/{tour}/vote', [\App\Http\Controllers\TourVoteController::class, 'store'])->name('tours.vote');
 });
 Route::get('/', [TourController::class, 'index'])->name('home');
 Route::middleware('auth')->group(function () {
@@ -48,8 +56,7 @@ Route::get('/test-gemini', function () {
 
         $client = \Gemini::client($apiKey);
         
-        // Используем общий метод generativeModel и передаем ему ПОЛНОЕ имя
-        $result = $client->generativeModel('gemini-pro-latest') // Можно и 'gemini-2.5-pro'
+        $result = $client->generativeModel('gemini-pro-latest')
             ->generateContent('Напиши "Привет, Мир!" на русском');
 
         return $result->text();

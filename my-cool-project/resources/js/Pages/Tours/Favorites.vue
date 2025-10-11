@@ -1,8 +1,7 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'; 
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import FavoriteButton from '@/Components/FavoriteButton.vue';
-import VoteButtons from '@/Components/VoteButtons.vue';
 
 defineProps({
     tours: Object,
@@ -10,21 +9,43 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Каталог туров" />
+    <Head title="Мои избранные туры" />
 
     <AppLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Каталог Туров</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">❤️ Мои Избранные Туры</h2>
         </template>
 
         <div class="py-12 bg-gradient-to-b from-gray-50 via-white to-gray-50">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div v-for="tour in tours.data" :key="tour.id" class="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-indigo-300 transform hover:-translate-y-2">
+                <!-- Empty State -->
+                <div v-if="tours.length === 0" class="text-center py-16">
+                    <div class="bg-white rounded-3xl shadow-xl p-12 max-w-2xl mx-auto">
+                        <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-3xl font-black text-gray-900 mb-4">Нет избранных туров</h3>
+                        <p class="text-lg text-gray-600 mb-8">
+                            Вы еще не добавили ни одного тура в избранное. Начните исследовать наш каталог!
+                        </p>
+                        <Link :href="route('home')" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Найти туры
+                        </Link>
+                    </div>
+                </div>
+
+                <!-- Tours Grid -->
+                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="tour in tours" :key="tour.id" class="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-indigo-300 transform hover:-translate-y-2">
                         <div class="relative h-64 overflow-hidden">
                             <Link :href="route('tours.show', tour.id)" class="block h-full">
                                 <img 
-                                    :src="tour.images.length > 0 ? `/storage/${tour.images[0].url}` : 'https://picsum.photos/800/600'" 
+                                    :src="tour.images && tour.images.length > 0 ? `/storage/${tour.images[0].url}` : 'https://picsum.photos/800/600'" 
                                     alt="Tour Image" 
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 >
@@ -32,7 +53,7 @@ defineProps({
                             </Link>
                             
                             <!-- Favorite Button - Outside Link -->
-                            <FavoriteButton v-if="$page.props.auth.user" :tour="tour" :is-favorited="tour.is_favorited" />
+                            <FavoriteButton :tour="tour" :is-favorited="tour.is_favorited" />
                             
                             <!-- Price Badge -->
                             <div class="absolute top-4 right-4 pointer-events-none">
@@ -41,11 +62,11 @@ defineProps({
                                         <span class="text-2xl font-black text-gray-900">{{ (tour.price_minor / 100).toFixed(0) }}</span>
                                         <span class="text-sm font-bold text-gray-600">₽</span>
                                     </div>
-                                    <VoteButtons v-if="$page.props.auth.user" :tour="tour" :user-vote="tour.user_vote" />
                                 </div>
                             </div>
                         </div>
 
+                        
                         <Link :href="route('tours.show', tour.id)" class="block p-6">
                             <h2 class="text-2xl font-black text-gray-900 mb-4 group-hover:text-indigo-600 transition-colors">
                                 {{ tour.title }}

@@ -6,6 +6,8 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import { ref, watch, onMounted, onUnmounted } from 'vue';
+import FavoriteButton from '@/Components/FavoriteButton.vue';
+import VoteButtons from '@/Components/VoteButtons.vue';
 
 const props = defineProps({
     tour: Object,
@@ -78,6 +80,10 @@ const submit = () => {
                     transform: `translateY(${parallaxOffset}px)`
                 }"
             ></div>
+            
+            <!-- Favorite Button on Hero Image -->
+            <FavoriteButton v-if="$page.props.auth.user" :tour="tour" :is-favorited="tour.is_favorited" />
+            
         </section>
 
         <!-- Title Section with Overlap -->
@@ -91,7 +97,9 @@ const submit = () => {
                         <p v-if="tour.description" class="text-lg text-gray-600 leading-relaxed">
                             {{ tour.description }}
                         </p>
+                        <VoteButtons v-if="$page.props.auth.user" :tour="tour" :user-vote="tour.user_vote" />
                     </div>
+
                     <div class="flex flex-wrap gap-3">
                         <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
